@@ -1,0 +1,89 @@
+---
+title: "Week 5 Video Script"
+format: html
+editor: visual
+---
+
+## EDA principles
+
+1. Generate questions about your data. 
+
+- __What impacts the number of bike rentals?__
+
+2. Search for answers by visualizing, transforming, and modelling your data.
+
+3. Use what you learn to refine your questions and/or generate new questions.
+
+
+
+## ggplot Layers
+
+```{r, message = F}
+library(tidyverse)
+bike_counts <- read_csv('http://www.math.montana.edu/ahoegh/teaching/stat408/datasets/Bike.csv')
+
+glimpse(bike_counts)
+head(bike_counts)
+summary(bike_counts)
+```
+
+---
+
+#### 1D: explore count
+
+```{r}
+bike_counts |>
+  ggplot(aes(x= count)) +
+  geom_histogram(bins = 100, color = 'blue', fill = 'yellow') +
+  theme_bw()
+```
+
+
+#### 2D: explore count vs. temperature
+
+```{r}
+bike_counts |>
+  mutate(season_factor = factor(season),
+         holiday_factor = factor(holiday)) |>
+  ggplot(aes(y = count, x = temp, color = season_factor, shape = holiday_factor)) +
+  geom_jitter(alpha = .1) +
+  geom_smooth(method = 'loess', formula = 'y ~ x') +
+  theme_bw() +
+  facet_wrap(season_factor~.)
+```
+
+#### 2D: explore count vs. season (factor)
+
+```{r}
+bike_counts |>
+  mutate(season_factor = factor(season),
+         holiday_factor = factor(holiday)) |>
+  ggplot(aes(y = count, x = season_factor, shape = holiday_factor, color = holiday_factor)) +
+  geom_violin() +
+  geom_boxplot() +
+    geom_jitter(alpha = .1) +
+  theme_bw() +
+  facet_wrap(holiday_factor ~ .)
+```
+
+
+---
+
+### Aesthetics
+
+-   Color
+-   Shape
+-   Size
+-   x-axis
+-   y-axis
+
+---
+
+### Geometric Objects
+
+-   geom_point() / geom_jitter()
+-   geom_line() / geom_smooth()
+-   geom_boxplot()
+-   geom_histogram()
+
+### Facets
