@@ -1,0 +1,55 @@
+---
+title: "Strings and Dates"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+nyc_squirrels <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-29/nyc_squirrels.csv")
+glimpse(nyc_squirrels)
+```
+
+## Squirrel Data
+
+-   Convert to date time object
+
+```{r}
+nyc_squirrels |>
+  mutate(date_new = mdy(date)) |>
+  select(date, date_new) 
+```
+
+-   How many Cinnamon colored squirrels?
+
+```{r}
+nyc_squirrels |> 
+  filter(str_detect(combination_of_primary_and_highlight_color, 'Cinnamon')) |> 
+  tally()
+
+```
+
+-   Can we categorize the activities?
+
+```{r}
+nyc_squirrels |>
+  mutate(activities = case_when(
+    running == TRUE ~ 'running',
+    running & chasing ~ 'running and chasing',
+    chasing ~ 'chasing',
+    eating ~ 'eating',
+    foraging ~ 'foraging',
+    climbing ~ 'climbing',
+    TRUE ~ 'lazy squirrel'
+  )) |>
+  select(running, chasing, eating, foraging, climbing, activities)
+```
+
+-   Can we extract the hectare components \# is N to S and letters are E to West?
+
+```{r}
+nyc_squirrels |>
+  mutate(hectare_N = str_sub(hectare, start = 1, end = 2),
+         hectare_E = str_sub(hectare, start = 3, end = 3)) |>
+  select(hectare, hectare_N, hectare_E)
+```
